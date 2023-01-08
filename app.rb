@@ -1,4 +1,4 @@
-#!/Users/sugamshakya/.rbenv/shims/ruby
+#!/usr/local/bin/ruby
 # frozen_string_literal: true
 
 $LOAD_PATH.unshift(File.dirname(__FILE__))
@@ -7,6 +7,7 @@ require 'optparse'
 require 'service/http'
 require 'service/store'
 require 'service/metadata'
+require 'service/log'
 
 options = {}
 OptionParser.new do |opts|
@@ -21,24 +22,26 @@ ARGV.each do |a|
 end
 
 urls.each do |_url|
-  # print "Fetching URL: #{url} ...\n"
+  LogService.debug "Fetching URL: #{_url} ...\n"
   url = HttpService.valid_url(_url)
   page = HttpService.get(url)
   domain = URI.parse(url)&.host
-  # print "Fetch complete. Initiate parsing ...\n"
+  LogService.debug "Fetch complete. Initiate parsing ...\n"
 
-  metadata = Metadata.new(domain, page).get_metadata
-  metadata.each do |key, value|
-    print "#{key}: #{value} \n"
+  if options[:metadata]
+    metadata = Metadata.new(domain, page).get_metadata
+    metadata.each do |key, value|
+      LogService.log "#{key}: #{value} \n"
+    end
   end
 
-  # print "Saving records ... \n"
+  LogService.debug "Saving records ... \n"
   Store.new(domain).save(page)
-  # print "Processing complete for url: #{url} \n\n"
-  print "\n\n"
+  LogService.debug "Processing complete for url: #{url} \n\n"
+  LogService.debug "\n\n"
 rescue StandardError => e
-  print "Error while processing URL: #{url}\n"
-  print "#{e} \n\n"
+  LogService.log "Error while processing URL: #{url}\n"
+  LogService.log "#{e} \n\n"
 end
 
 # TODO: Archive the downloaded web page's assets to run as html pages.
