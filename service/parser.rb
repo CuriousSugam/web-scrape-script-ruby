@@ -14,8 +14,8 @@ class Parser
   def metadata(opts = DEFAULT_OPTIONS)
     metadata = {}
     doc = Nokogiri::HTML(page)
-    metadata[:images_count] = doc.search('img').length if opts[:images_count]
-    metadata[:links_count] = doc.search('a').length if opts[:links_count]
+    metadata[:images] = doc.search('img').length if opts[:images_count]
+    metadata[:num_links] = doc.search('a').length if opts[:links_count]
 
     metadata
   rescue StandardError => e

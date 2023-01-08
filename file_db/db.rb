@@ -24,7 +24,7 @@ class FileDatabase
 
     _data = map[name]
     _data = {} if _data.nil?
-    _data['last_fetched'] = Time.now.utc.strftime('%a %b %d %Y%k:%M UTC')
+    _data['last_fetch'] = Time.now.utc.strftime('%a %b %d %Y%k:%M UTC')
 
     map[name] = _data
 
