@@ -4,10 +4,11 @@ require 'net/http'
 
 class HttpService
   def self.get(url)
+    # TODO: we need to validate the url.
     uri = URI(valid_url(url))
     Net::HTTP.get(uri)
-  rescue StandardError => e
-    print "Error: Could not fetch URL: #{url}. \n #{e}"
+  rescue Timeout::Error, StandardError => e
+    LogService.log "Error: Could not fetch URL: #{url}. \n #{e}"
     raise e
   end
 
